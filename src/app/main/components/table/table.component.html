@@ -1,0 +1,39 @@
+<table class="w-full text-sm text-left text-gray-900">
+  <thead class="text-xs text-white uppercase bg-orange-500">
+    <tr>
+      <th scope="col" class="px-4 py-3">Completar</th>
+      <th scope="col" class="px-4 py-3">Titulo</th>
+      <th scope="col" class="px-4 py-3">Descripción</th>
+      <th scope="col" class="px-4 py-3">Estado</th>
+      <th scope="col" class="px-4 py-3">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="border-b" *ngFor="let item of list; trackBy: ItemById">
+      <td class="w-4 px-4 py-3">
+        <div class="flex items-center">
+          <input
+            id="checkbox-table-search-1"
+            type="checkbox"
+            (click)="completeTask()"
+            class="appearance-none w-5 h-5 bg-white border rounded-full border-gray-500 checked:bg-green-500"
+          />
+        </div>
+      </td>
+      <th
+        scope="row"
+        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap"
+      >
+        {{ item.title }}
+      </th>
+      <td class="px-4 py-3">{{ item.description }}</td>
+      <td class="px-4 py-3"><app-tag [status]="item.status"></app-tag></td>
+      <td class="px-4 py-3 text-right">
+        <app-dropdown
+          class="relative"
+          (resolvedClick)="handleClick($event, item)"
+        ></app-dropdown>
+      </td>
+    </tr>
+  </tbody>
+</table>

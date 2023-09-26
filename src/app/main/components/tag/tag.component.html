@@ -1,0 +1,12 @@
+<div
+  *ngIf="status === 'PENDING'"
+  class="flex flex-row items-center justify-center px-2 py-1 rounded-3xl bg-gray-500"
+>
+  <label class="text-xs font-semibold uppercase text-white">{{ status }}</label>
+</div>
+<div
+  *ngIf="status === 'COMPLETED'"
+  class="flex flex-row items-center justify-center px-2 py-1 rounded-3xl bg-green-500"
+>
+  <label class="text-xs font-semibold uppercase text-white">{{ status }}</label>
+</div>
