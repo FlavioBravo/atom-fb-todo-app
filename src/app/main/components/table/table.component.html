@@ -3,8 +3,8 @@
     <tr>
       <th scope="col" class="px-4 py-3">Completar</th>
       <th scope="col" class="px-4 py-3">Titulo</th>
-      <th scope="col" class="px-4 py-3 hidden lg:inline-block">Descripción</th>
-      <th scope="col" class="px-4 py-3 hidden md:inline-block">Estado</th>
+      <th scope="col" class="px-4 py-3 hidden lg:table-cell">Descripción</th>
+      <th scope="col" class="px-4 py-3 hidden md:table-cell">Estado</th>
       <th scope="col" class="px-4 py-3">Acciones</th>
     </tr>
   </thead>
@@ -27,10 +27,10 @@
       >
         {{ item.title }}
       </th>
-      <td class="px-4 py-3 max-w-xs hidden lg:inline-block">
+      <td class="px-4 py-3 max-w-xs hidden lg:table-cell">
         {{ item.description }}
       </td>
-      <td class="px-4 py-3 hidden md:inline-block"><app-tag [status]="item.status"></app-tag></td>
+      <td class="px-4 py-3 hidden md:table-cell"><app-tag [status]="item.status"></app-tag></td>
       <td class="px-4 py-3 text-right">
         <app-dropdown
           class="relative"
