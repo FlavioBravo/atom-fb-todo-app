@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   HostListener,
+  Input,
   Output,
 } from '@angular/core';
 import * as Mousetrap from 'mousetrap';
@@ -14,6 +15,7 @@ import { DELETE_ACTION, EDIT_ACTION } from '../../utils/constants';
   styleUrls: ['./dropdown.component.css'],
 })
 export class DropdownComponent {
+  @Input() disabled = 'PENDING';
   @Output() resolvedClick = new EventEmitter<string>();
   isOpen = false;
   mousetrap = new Mousetrap(this.eRef.nativeElement);

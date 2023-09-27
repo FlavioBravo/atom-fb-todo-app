@@ -20,10 +20,17 @@ export class CreateTaskModalComponent implements OnInit {
     description: ['', [Validators.required]],
   });
 
-  constructor(private dialogRef: ModalRef, private fb: FormBuilder, @Inject(DIALOG_DATA) public data: any) {}
+  constructor(
+    private dialogRef: ModalRef,
+    private fb: FormBuilder,
+    @Inject(DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit(): void {
     this.title = this.data.title;
+    if (this.data?.task) {
+      this.taskForm.patchValue({ ...this.data.task });
+    }
   }
 
   save() {

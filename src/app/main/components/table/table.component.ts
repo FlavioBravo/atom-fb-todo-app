@@ -1,7 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Task } from '../../models/task';
 import { ModalService } from '../../services/modal/modal.service';
-import { EDIT_ACTION } from '../../utils/constants';
+import {
+  COMPLETE_ACTION,
+  DELETE_ACTION,
+  EDIT_ACTION,
+} from '../../utils/constants';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { CreateTaskModalComponent } from '../create-task-modal/create-task-modal.component';
 
@@ -12,6 +16,7 @@ import { CreateTaskModalComponent } from '../create-task-modal/create-task-modal
 })
 export class TableComponent {
   @Input() list: any[] = [];
+  @Output() resolvedClick = new EventEmitter<any>();
 
   constructor(private modalService: ModalService) {}
 
@@ -31,8 +36,8 @@ export class TableComponent {
     }
   }
 
-  completeTask(): void {
-    console.log('completeTask');
+  completeTask(item: Task): void {
+    this.resolvedClick.emit({ task: item, action: COMPLETE_ACTION });
   }
 
   openEditModal(item: any): void {
@@ -44,7 +49,10 @@ export class TableComponent {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      console.log(data);
+      if (data) {
+        const editData: Task = { ...item, ...data };
+        this.resolvedClick.emit({ task: editData, action: EDIT_ACTION });
+      }
     });
   }
 
@@ -57,7 +65,9 @@ export class TableComponent {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      console.log(data);
+      if (data) {
+        this.resolvedClick.emit({ task: item, action: DELETE_ACTION });
+      }
     });
   }
 }

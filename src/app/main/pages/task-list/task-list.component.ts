@@ -1,8 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CreateTaskModalComponent } from '../../components/create-task-modal/create-task-modal.component';
+import { Response } from '../../models/response';
 import { Task } from '../../models/task';
 import { ModalService } from '../../services/modal/modal.service';
+import { TaskService } from '../../services/task.service';
+import {
+  COMPLETED_STATUS,
+  COMPLETE_ACTION,
+  EDIT_ACTION,
+} from '../../utils/constants';
 
 @Component({
   selector: 'app-task-list',
@@ -10,55 +17,88 @@ import { ModalService } from '../../services/modal/modal.service';
   styleUrls: ['./task-list.component.css'],
 })
 export class TaskListComponent {
-  taskList: Task[] = [
-    {
-      id: '1',
-      title: 'Tarea 1',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      status: 'PENDING',
-    },
-    {
-      id: '2',
-      title: 'Tarea 2',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      status: 'COMPLETED',
-    },
-    {
-      id: '3',
-      title: 'Tarea 3',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      status: 'PENDING',
-    },
-    {
-      id: '4',
-      title: 'Tarea 4',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      status: 'PENDING',
-    },
-    {
-      id: '5',
-      title: 'Tarea 5',
-      description:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      status: 'COMPLETED',
-    },
-  ];
+  taskList: Task[] = new Array<Task>();
 
-  constructor(private modalService: ModalService, private fb: FormBuilder) {}
+  searchForm = this.fb.group({
+    text: [''],
+  });
+
+  constructor(
+    private modalService: ModalService,
+    private fb: FormBuilder,
+    private taskService: TaskService
+  ) {}
+
+  ngOnInit(): void {
+    this.getTaskList();
+  }
+
+  getTaskList(): void {
+    this.taskService.getTaskList().subscribe((res: Response) => {
+      this.taskList = res.payload;
+    });
+  }
 
   openCreateTaskModal(): void {
     const dialogRef = this.modalService.open(CreateTaskModalComponent, {
       data: {
-        title: 'Agregar tarea'
-      }
+        title: 'Agregar tarea',
+      },
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      console.log(data);
+      if (data) {
+        this.taskService.createTask(data).subscribe((res: Response) => {
+          if (res?.success) {
+            this.getTaskList();
+          }
+        });
+      }
     });
+  }
+
+  search(): void {
+    const text = this.searchForm.get('text')?.value;
+    if (text) {
+      this.taskList = this.taskList.filter((task) =>
+        task.title.toLowerCase().includes(text.toLowerCase())
+      );
+    } else {
+      this.getTaskList();
+    }
+  }
+
+  handleClick(event: any): void {
+    switch (event.action) {
+      case COMPLETE_ACTION:
+        const doneTask: Task = { ...event.task };
+        doneTask.status = COMPLETED_STATUS;
+        this.taskService.editTask(doneTask).subscribe((res: Response) => {
+          if (res?.success) {
+            this.getTaskList();
+          }
+        });
+        break;
+      case EDIT_ACTION:
+        const editTask: Task = { ...event.task };
+        this.taskService.editTask(editTask).subscribe((res: Response) => {
+          if (res?.success) {
+            this.getTaskList();
+          }
+        });
+        break;
+      default:
+        const deleteTask: Task = { ...event.task };
+        if (deleteTask?.id) {
+          this.taskService
+            .deleteTask(deleteTask.id)
+            .subscribe((res: Response) => {
+              if (res?.success) {
+                this.getTaskList();
+              }
+            });
+        }
+        break;
+    }
   }
 }

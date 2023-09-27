@@ -24,7 +24,12 @@
 >
   <ul class="py-1 text-sm text-gray-700">
     <li>
-      <a class="block py-2 px-4 hover:bg-gray-100" (click)="edit()">Editar</a>
+      <a
+        class="block py-2 px-4 hover:bg-gray-100"
+        (click)="edit()"
+        [ngClass]="{ 'dropdown__option--disabled': disabled === 'COMPLETED' }"
+        >Editar</a
+      >
     </li>
     <li>
       <a class="block py-2 px-4 hover:bg-gray-100" (click)="delete()"

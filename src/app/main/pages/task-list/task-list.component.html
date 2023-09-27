@@ -1,8 +1,16 @@
-<section class="flex flex-col sm:rounded-lg border-1 border-gray-300 p-4">
-  <div class="flex flex-col md:flex-row items-center justify-between pb-4">
-    <div class="w-full md:w-1/2">
-      <form class="flex items-center">
-        <div class="relative w-full">
+<section
+  class="flex flex-col border-0 border-gray-300 p-4 my-4 w-screen md:w-auto lg:border lg:rounded-lg lg:my-0"
+>
+  <div
+    class="flex flex-col-reverse md:flex-row items-center justify-between pb-4 md:items-center"
+  >
+    <div class="w-full lg:w-1/2">
+      <form
+        class="flex items-center"
+        [formGroup]="searchForm"
+        (ngSubmit)="search()"
+      >
+        <div class="relative w-full md:w-1/2 lg:w-full">
           <div
             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
           >
@@ -26,12 +34,13 @@
             class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 placeholder-gray-500"
             placeholder="Busqueda"
             required=""
+            formControlName="text"
           />
         </div>
       </form>
     </div>
     <div
-      class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
+      class="w-full md:w-auto flex flex-col mb-4 md:mb-0 md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0"
     >
       <button
         type="button"
@@ -52,7 +61,8 @@
       </button>
     </div>
   </div>
-  <div class="overflow-x-auto">
-    <app-table [list]="taskList"></app-table>
-  </div>
+  <app-table
+    [list]="taskList"
+    (resolvedClick)="handleClick($event)"
+  ></app-table>
 </section>
